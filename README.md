@@ -2,6 +2,7 @@
 This college project explores machine learning to aid in early ovarian cancer detection. We applied K-Nearest Neighbors (KNN), Random Forest (RF), and Decision Tree (DT) models, plus an RF-DT ensemble for enhanced accuracy. Includes SMOTE to address data imbalance and performance metrics for a thorough evaluation.
 
 Our Contributions to the existing works :
+
 Integration of Ensemble Learning :
 We implemented ensemble learning techniques by combining two well-established models, Random Forest and Decision Tree, to improve the accuracy and robustness of early-stage ovarian cancer detection.
 By leveraging the strengths of both models, we achieved a more resilient prediction system, with reduced risk of overfitting and enhanced generalization capabilities.
