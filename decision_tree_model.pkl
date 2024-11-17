@@ -1,0 +1,124 @@
+# Train Decision Tree model
+# Decision Tree Model - Expanded Hyperparameter Tuning (with overfitting reduction techniques)
+param_dist_dt = {
+    'criterion': ['gini', 'entropy'],
+    'max_depth': [None, 5, 7, 10],  # Limiting max_depth to avoid overfitting
+    'min_samples_split': [2, 5, 10],  # Increasing min_samples_split
+    'min_samples_leaf': [1, 2, 4],  # Increasing min_samples_leaf
+    'class_weight': [None, 'balanced'],  # Optional: Use if classes are imbalanced
+    'max_features': [None, 'sqrt', 'log2']  # Limiting features per split
+}
+
+dtc = RandomizedSearchCV(DecisionTreeClassifier(random_state=42), param_distributions=param_dist_dt, n_iter=10, cv=3, n_jobs=-1, random_state=42)
+dtc.fit(X_train, y_train)
+best_dtc = dtc.best_estimator_
+
+# Predicting the outcomes
+y_train_pred = dtc.predict(X_train)
+y_test_pred = dtc.predict(X_test)
+
+# Calculate metrics
+metrics = {
+    'Train Accuracy': accuracy_score(y_train, y_train_pred),
+    'Test Accuracy': accuracy_score(y_test, y_test_pred),
+    'Precision': precision_score(y_test, y_test_pred, average='weighted', zero_division=1),
+    'Recall': recall_score(y_test, y_test_pred, average='weighted'),
+    'F1 Score': f1_score(y_test, y_test_pred, average='weighted'),
+    'AUC': roc_auc_score(y_test, dtc.predict_proba(X_test)[:, 1]),
+    'Log Loss': log_loss(y_test, dtc.predict_proba(X_test))
+}
+
+# Print evaluation results
+print(f"Best Decision Tree Model Evaluation:")
+print("Training confusion matrix:\n", confusion_matrix(y_train, y_train_pred))
+print("Testing confusion matrix:\n", confusion_matrix(y_test, y_test_pred))
+for metric, value in metrics.items():
+    print(f"{metric}: {value:.4f}")
+
+dtc_overfit = DecisionTreeClassifier(max_depth=None, random_state=42)
+
+# Train the model
+dtc_overfit.fit(X_train, y_train)
+
+# Predictions
+y_train_pred = dtc_overfit.predict(X_train)
+y_test_pred = dtc_overfit.predict(X_test)
+
+# Metrics
+print(f"Overfitting Decision Tree Model:")
+print(f"Train Accuracy: {accuracy_score(y_train, y_train_pred):.4f}")
+print(f"Test Accuracy: {accuracy_score(y_test, y_test_pred):.4f}")
+print("Training confusion matrix:\n", confusion_matrix(y_train, y_train_pred))
+print("Testing confusion matrix:\n", confusion_matrix(y_test, y_test_pred))
+
+dtc_underfit = DecisionTreeClassifier(max_depth=3, random_state=42)
+
+# Train the model
+dtc_underfit.fit(X_train, y_train)
+
+# Predictions
+y_train_pred = dtc_underfit.predict(X_train)
+y_test_pred = dtc_underfit.predict(X_test)
+
+# Metrics
+print(f"Underfitting Decision Tree Model:")
+print(f"Train Accuracy: {accuracy_score(y_train, y_train_pred):.4f}")
+print(f"Test Accuracy:{ accuracy_score(y_test, y_test_pred):.4f}")
+print("Training confusion matrix:\n", confusion_matrix(y_train, y_train_pred))
+print("Testing confusion matrix:\n", confusion_matrix(y_test, y_test_pred))
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Data for comparison
+models = ['Best DT', 'Overfitting DT', 'Underfitting DT']
+train_accuracies = [0.9032, 1.0000, 0.9283]
+test_accuracies = [0.8857, 0.8143, 0.8429]
+
+# Plotting
+plt.figure(figsize=(10, 6))
+x = np.arange(len(models))  # X-axis positions
+width = 0.35  # Bar width
+
+# Plot bars for Train and Test Accuracies
+bars_train = plt.bar(x - width/2, train_accuracies, width, label='Train Accuracy', color='b')  # Blue for Train
+bars_test = plt.bar(x + width/2, test_accuracies, width, label='Test Accuracy', color='orange')  # Orange for Test
+
+# Adding labels and title
+plt.xlabel('Models')
+plt.ylabel('Accuracy')
+plt.title('Comparison of Train and Test Accuracies for Decision Tree Models')
+plt.xticks(x, models)
+plt.legend()
+
+# Adding values on top of the bars
+for bar in bars_train:
+    plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,  # Positioning text slightly above the bar
+             f'{bar.get_height():.4f}', ha='center', va='bottom', fontsize=10)
+
+for bar in bars_test:
+    plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,  # Positioning text slightly above the bar
+             f'{bar.get_height():.4f}', ha='center', va='bottom', fontsize=10)
+
+# Display the plot
+plt.tight_layout()
+plt.show()
+
+importances = m_best_dtc.feature_importances_
+
+# Create a DataFrame to display feature importances along with their names
+feature_importance_df_dtc = pd.DataFrame({'Feature': X.columns, 'Importance': importances})
+
+# Sort the DataFrame by importance in descending order
+feature_importance_df_dtc = feature_importance_df_dtc.sort_values(by='Importance', ascending=False)
+
+# Display the top three most important features
+top_features_dtc = feature_importance_df_dtc.head(3)
+print("Top Three Important Features for DT Model:")
+print(top_features_dtc)
+
+# Plotting Feature Importance
+plt.figure(figsize=(10, 6))
+sns.barplot(x='Importance', y='Feature', data=top_features_dtc)
+plt.title('Top Three Most Important Features for Cancer Prediction using Decision Tree')
+plt.show()
