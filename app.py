@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 from model import load_data, train_knn, train_random_forest, train_decision_tree
-import joblib
 
 # Load and preprocess data (this happens once at the start)
 @st.cache_data  # Cache data to avoid redundant loading
@@ -14,11 +13,11 @@ X, y = get_data()
 @st.cache_resource  # Cache trained models to avoid retraining
 def train_model(model_type):
     if model_type == "K-Nearest Neighbors (KNN)":
-        return train_knn(X, X, y, y)  # Pass X_train, X_test, y_train, y_test
+        return train_knn(X, y)
     elif model_type == "Random Forest":
-        return train_random_forest(X, X, y, y)
+        return train_random_forest(X, y)
     elif model_type == "Decision Tree":
-        return train_decision_tree(X, X, y, y)
+        return train_decision_tree(X, y)
     else:
         st.error("Invalid model selected.")
         return None
@@ -38,6 +37,8 @@ if st.sidebar.button("Train Model"):
     st.write(f"Training {model_choice}...")
     model = train_model(model_choice)
     if model:
+        # Save model to session state after training
+        st.session_state.model = model
         st.success(f"{model_choice} has been trained successfully!")
 
 # Section for predictions
@@ -48,10 +49,11 @@ if uploaded_file:
     # Load uploaded data
     user_data = pd.read_csv(uploaded_file)
 
-    # Make predictions if a model is trained
-    if 'model' in locals() and model:
+    # Check if model is trained and available
+    if 'model' in st.session_state and st.session_state.model:
         st.write("Predicting...")
-        predictions = model.predict(user_data)  # Use the trained model for predictions
+        model = st.session_state.model
+        predictions = model.predict(user_data)
         st.write("Predictions:")
         st.write(predictions)
     else:
