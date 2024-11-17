@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from model import load_data, train_knn, train_random_forest, train_decision_tree
+from sklearn.model_selection import train_test_split
 
 # Load and preprocess data (this happens once at the start)
 @st.cache_data  # Cache data to avoid redundant loading
@@ -9,15 +10,18 @@ def get_data():
 
 X, y = get_data()
 
+# Split the data into train and test sets (do this once and use for all models)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
 # Train models based on user selection
 @st.cache_resource  # Cache trained models to avoid retraining
 def train_model(model_type):
     if model_type == "K-Nearest Neighbors (KNN)":
-        return train_knn(X, y)
+        return train_knn(X_train, X_test, y_train, y_test)
     elif model_type == "Random Forest":
-        return train_random_forest(X, y)
+        return train_random_forest(X_train, X_test, y_train, y_test)
     elif model_type == "Decision Tree":
-        return train_decision_tree(X, y)
+        return train_decision_tree(X_train, X_test, y_train, y_test)
     else:
         st.error("Invalid model selected.")
         return None
