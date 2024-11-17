@@ -13,7 +13,6 @@ from sklearn.decomposition import PCA
 from sklearn.inspection import permutation_importance
 from imblearn.over_sampling import SMOTE
 import joblib
-import pandas as pd
 
 # Load and preprocess the dataset
 def load_data():
@@ -53,7 +52,7 @@ def evaluate_model(model, X_test, y_test):
     print(confusion_matrix(y_test, y_pred))
     for metric, value in metrics.items():
         print(f"{metric}: {value:.4f}")
-    return metrics
+    return model  # Return the trained model
 
 # Train and evaluate KNN with hyperparameter tuning
 def train_knn(X_train, X_test, y_train, y_test):
@@ -63,7 +62,8 @@ def train_knn(X_train, X_test, y_train, y_test):
     best_knn = knn.best_estimator_
 
     print("\nEvaluating KNN Model...")
-    return evaluate_model(best_knn, X_test, y_test)
+    evaluate_model(best_knn, X_test, y_test)
+    return best_knn  # Return the trained model
 
 # Train and evaluate Random Forest with GridSearchCV
 def train_random_forest(X_train, X_test, y_train, y_test):
@@ -78,7 +78,8 @@ def train_random_forest(X_train, X_test, y_train, y_test):
     best_rfc = rfc.best_estimator_
 
     print("\nEvaluating Random Forest Model...")
-    return evaluate_model(best_rfc, X_test, y_test)
+    evaluate_model(best_rfc, X_test, y_test)
+    return best_rfc  # Return the trained model
 
 # Train and evaluate Decision Tree with hyperparameter tuning
 def train_decision_tree(X_train, X_test, y_train, y_test):
@@ -93,7 +94,8 @@ def train_decision_tree(X_train, X_test, y_train, y_test):
     best_dt = dt.best_estimator_
 
     print("\nEvaluating Decision Tree Model...")
-    return evaluate_model(best_dt, X_test, y_test)
+    evaluate_model(best_dt, X_test, y_test)
+    return best_dt  # Return the trained model
 
 # Perform PCA and visualize results
 def apply_pca(X, y):
@@ -124,24 +126,24 @@ def run_models():
 
     # KNN
     print("\n--- Training KNN ---")
-    knn_metrics = train_knn(X_train, X_test, y_train, y_test)
+    knn_model = train_knn(X_train, X_test, y_train, y_test)
 
     # Random Forest
     print("\n--- Training Random Forest ---")
-    rf_metrics = train_random_forest(X_train, X_test, y_train, y_test)
+    rf_model = train_random_forest(X_train, X_test, y_train, y_test)
 
     # Decision Tree
     print("\n--- Training Decision Tree ---")
-    dt_metrics = train_decision_tree(X_train, X_test, y_train, y_test)
+    dt_model = train_decision_tree(X_train, X_test, y_train, y_test)
 
     # PCA Visualization
     print("\n--- Applying PCA ---")
     apply_pca(X, y)
 
     # Save models for reuse
-    joblib.dump(knn_metrics, 'knn_model.pkl')
-    joblib.dump(rf_metrics, 'random_forest_model.pkl')
-    joblib.dump(dt_metrics, 'decision_tree_model.pkl')
+    joblib.dump(knn_model, 'knn_model.pkl')
+    joblib.dump(rf_model, 'random_forest_model.pkl')
+    joblib.dump(dt_model, 'decision_tree_model.pkl')
 
     print("\nModels have been saved successfully.")
 
