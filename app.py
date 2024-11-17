@@ -50,13 +50,17 @@ st.header("Make Predictions")
 uploaded_file = st.file_uploader("Upload a CSV file for predictions", type="csv")
 
 if uploaded_file:
-    # Load uploaded data with a specific encoding to handle different formats
     try:
-        user_data = pd.read_csv(uploaded_file, encoding='utf-8')  # Default utf-8
+        # Try reading with default comma delimiter
+        user_data = pd.read_csv(uploaded_file, encoding='utf-8', sep=',')
     except UnicodeDecodeError:
-        # If utf-8 doesn't work, try other common encodings
-        user_data = pd.read_csv(uploaded_file, encoding='ISO-8859-1')  # latin1 or windows-1252
-
+        # Fallback to other encoding if utf-8 doesn't work
+        user_data = pd.read_csv(uploaded_file, encoding='ISO-8859-1', sep=',')
+    except pd.errors.ParserError:
+        # If there's a parser error, handle by ignoring bad lines
+        st.error("There was an issue with the CSV formatting. Please check the file for irregular rows.")
+        user_data = pd.read_csv(uploaded_file, encoding='utf-8', sep=',', error_bad_lines=False)
+    
     # Check if model is trained and available
     if 'model' in st.session_state and st.session_state.model:
         st.write("Predicting...")
