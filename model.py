@@ -13,6 +13,7 @@ from sklearn.decomposition import PCA
 from sklearn.inspection import permutation_importance
 from imblearn.over_sampling import SMOTE
 import joblib
+import pandas as pd
 
 # Load and preprocess the dataset
 def load_data():
