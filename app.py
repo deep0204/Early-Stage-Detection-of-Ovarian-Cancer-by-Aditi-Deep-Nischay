@@ -6,7 +6,8 @@ from model import load_data, train_knn, train_random_forest, train_decision_tree
 def get_data():
     return load_and_preprocess_data("OC_Marker.csv", "OC_Genarel_Chem.csv", "OC_Blood_Routine.csv")
 
-X, y = get_data()
+X, y = load_data()
+
 
 # Train models based on user selection
 @st.cache_resource  # Cache trained models to avoid retraining
