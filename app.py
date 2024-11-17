@@ -1,5 +1,6 @@
 import pandas as pd
 import streamlit as st
+from sklearn.preprocessing import MinMaxScaler  # Import MinMaxScaler
 from model import load_data, train_knn, train_random_forest, train_decision_tree
 
 # Load and preprocess data (this happens once at the start)
