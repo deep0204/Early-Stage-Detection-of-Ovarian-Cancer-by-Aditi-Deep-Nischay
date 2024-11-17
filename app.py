@@ -1,5 +1,5 @@
 import streamlit as st
-from model import load_and_preprocess_data, train_knn, train_random_forest, train_decision_tree
+from model import load_data, train_knn, train_random_forest, train_decision_tree
 
 # Load and preprocess data (this happens once at the start)
 @st.cache_data  # Cache data to avoid redundant loading
