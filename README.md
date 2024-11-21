@@ -5,11 +5,6 @@ This college project explores machine learning to aid in early ovarian cancer de
 
 Our Contribution : 
 
-Integration of Ensemble Learning : 
-
-•⁠  ⁠We implemented ensemble learning techniques by combining two well-established models, Random Forest and Decision Tree, to improve the accuracy and robustness of early-stage ovarian cancer detection.
-•⁠  ⁠By leveraging the strengths of both models, we achieved a more resilient prediction system, with reduced risk of overfitting and enhanced generalization capabilities.
-
 Hyperparameter Tuning : 
 
 •⁠  Optimized Model Parameters: Used GridSearchCV to systematically search for the best combination of hyperparameters across models (Random Forest, Decision Tree, etc.). This significantly boosted model performance      by identifying the best-fit parameters.
@@ -26,3 +21,6 @@ Visualization and Interpretability :
 
 •⁠  Feature Importance Plotting: Visualized the top three or more most important features for each model, allowing domain experts to understand which factors most influence predictions.
 •⁠  Metric Comparison Plotting: Compared model performance across various metrics in a single visualization, providing a clear and comprehensive comparison for decision-makers.
+
+Integration of PCA
+Principal Component Analysis (PCA) is used to reduce the dimensionality of the dataset while retaining the most important variance. It helps streamline the data by eliminating redundant and correlated features, improving model efficiency and training time.
